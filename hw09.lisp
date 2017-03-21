@@ -222,7 +222,8 @@ c) Prove the proof obligations using equational reasoning or using an approach
   :output-contract (nnrp (abs r))
   (if (< r 0)
     (unary-- r)
-    r))
+    r))#|ACL2s-ToDo-Line|#
+
 #|<Init::Fin>
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -373,7 +374,9 @@ concrete values a,b,c that satisfies the input contract but causes an
 infinite execution.
 ;;<FNT::a>;;
 
-..................
+a = 1
+b = '(0)
+c = 2
 
 (b) Melanie admits there were problems in her definition. Her new
 function (OMG = OK Melanie's Great) is:
