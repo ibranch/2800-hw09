@@ -631,7 +631,9 @@ Also see the definition of max-l above.
 ;;<II::b.init>;;
 Write the induction scheme for in or provide the proof obligations using
 the induction scheme for in:
-.......................
+phi-in-max1: (not (listp l)) => phi-in-max
+phi-in-max2: (listp l) /\ (endp l) => phi-in-max
+phi-in-max3: (listp l) /\ (not (endp l)) /\ phi-in-max|((l (rest l))) => phi-in-max
 
 
 ;;<II::b>;;
@@ -640,7 +642,68 @@ Next assignment, we will say obligation 1 (not the input contract) is "Trivial"
 and not even do the proof but for now prove all conjectures.
 Can you see why we typically say trivial for the ~IC case if you 
 choose the right induction scheme?
-..................
+
+Because if we have ~IC as one of our given initial conditions, and we know that IC
+is also one of the given initial conditions (indeed, the IC tends to be our starting
+point for all conjecture-based proofs), it is trivial for us to derive nil - that is,
+we have IC and ~IC, or more formally, (A /\ ~A), which is nil. Once we have nil,
+propositional logic says that we are done (you can derive anything from a contradiction,
+therefore the contradiction has no logical meaning)
+
+
+phi-in-max1: Trivial case
+(not (listp l)) => (implies (and (lonp l)(consp l)) (in (max-l l) l))
+
+by exportation:
+(not (listp l)) /\ (lonp l) /\ (consp l) => (in (max-l l) l))
+
+C1. (not (listp l))
+C2. (lonp l)
+C3. (consp l)
+-----------
+C4. (listp l) {def in}
+
+(in (max-l l) l))
+= {c1, c4, PL}
+nil
+QED
+
+phi-in-max2:
+(listp l) /\ (endp l) => (implies (and (lonp l)(consp l)) (in (max-l l) l))
+
+by exportation:
+(listp l) /\ (endp l) /\ (lonp l) /\ (consp l) => (in (max-l l) l)
+
+C1. (listp l)
+C2. (endp l)
+C3. (lonp l)
+C4. (consp l)
+------------
+C5. (not (endp l)) {c4, def consp}
+
+(in (max-l l) l)
+= {c2, c5, PL}
+nil
+QED
+
+phi-in-max3:
+(listp l) /\ (not (endp l)) /\ phi-in-max|((l (rest l))) => (implies (and (lonp l)(consp l)) (in (max-l l) l))
+
+by exportation:
+(listp l) /\ (not (endp l)) /\ (lonp l) /\ (consp l) /\ phi-in-max|((l (rest l)) => (in (max-l l) l)
+
+C1. (listp l)
+C2. (not (endp l))
+C3. (lonp l)
+C4. (consp l)
+C5. (lonp (rest l)) /\ (consp (rest l)) => (in (max-l (rest l)) (rest l))
+--------------
+C6. (lonp (rest l)) {def. lonp, C2, C3}
+C7. (consp (rest l)) {def. consp, C2, C4}
+C8. (in (max-l (rest l)) (rest l)) {C5, C6, C7, MP}
+
+(in (max-l l) l)
+
 
 
 13) Prove the following conjecture
