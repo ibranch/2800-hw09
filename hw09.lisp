@@ -495,8 +495,12 @@ for additional practice, but you are NOT required to submit the proofs.
        ((> z 0)               (do-nothing (rest x) (cons (first x) y) (- z 1)))
        (t                     (do-nothing (cons (first y) x) (rest y) (+ z 1)))))
 
-.................
-
+(defunc m-do-nothing (x y z)
+ :input-contract (and (listp x) (listp y) (integerp z))
+ :output-contract (natp (m-do-nothing x y z))
+ (cond ((equal z 0) 0)
+       ((> z 0) (len x))
+       (t (len y))))
 
 ;;<MM::b>;;
 8.
@@ -507,7 +511,10 @@ for additional practice, but you are NOT required to submit the proofs.
         ((> x (len y))      (do-something (- x 1) y))
         (t                  (do-something (len y) (list x x x)))))
 
-..............
+(defunc m-do-something (x y)
+ :ic (and (natp x) (lonp y))
+ :oc (natp (m-do-something x y))
+ (if (> x (len y)) x (len y))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;<MM::c>;;
