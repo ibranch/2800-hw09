@@ -437,13 +437,42 @@ ACL2s. PROVE the measure function m20 decreases with each recursive call to f20.
 ;;<HSC::a>;;
 a)
 Write the conjectures needed to prove m20 is a measure function
-...............
+1. (integerp n) /\ (integerp m) /\ (>= n m) => (m20 (- n 1) m) < (m20 n m)
+2. (integerp n) /\ (integerp m) /\ (< n m) => (m20 (+ n 1) (- m 1)) < (m20 n m)
 
 
 ;;<HSC::b>;;
 b) Now prove each conjecture. Notice, you may have to do a proof by cases
 if you don't know if n < m in the recursive call:
-.............
+
+1. (integerp n) /\ (integerp m) /\ (>= n m) => (m20 (- n 1) m) < (m20 n m)
+
+C1. (integerp n)
+C2. (integerp m)
+C3. (>= n m)
+-------------
+(m20 (- n 1) m) < (m20 n m)
+= {def m20|((n (- n 1)) on LHS, c3, if-axiom; def m20 on RHS, c3, if-axiom}
+(- (- n 1) m) < (- n m)
+= {arithmetic}
+n - m - 1 < n - m
+which is true, so QED
+
+
+2. (integerp n) /\ (integerp m) /\ (< n m) => (m20 (+ n 1) (- m 1)) < (m20 n m)
+
+C1. (integerp n)
+C2. (integerp m)
+C3. (< n m)
+----------
+C4. (not (>= n m)) {C3, PL}
+
+(m20 (+ n 1) (- m 1)) < (m20 n m)
+= {def m20|((n (+ n 1)) (m (- m 1))) on LHS, C4, if-axiom; def m20 on RHS, c4, if-axiom}
+(+ (- (- m 1) (+ n 1)) 1) < (+ (- m n) 1)
+= {arithmetic, put in infix for reading purposes}
+((m - 1) - (n + 1)) + 1 < (m - n) + 1
+which is true (a smaller number minus a bigger number is less than a bigger number minus a smaller number), so QED
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
