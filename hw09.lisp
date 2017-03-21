@@ -335,7 +335,24 @@ For the second recursive call:
 (implies (and (lonp l)(natp n)(not (and (equal n 0)(endp l)))(not (> n 0)))
          (< (m3 (rest l) n) (m3 l n)))
 
-.......................
+ 
+(defunc f3 (l n)
+  :input-contract (and (lonp l)(natp n))
+  :output-contract (natp (f3 l n))
+  (cond ((and (equal n 0)(endp l)) 0)
+        ((> n 0) (f3 l (- n 1)))
+        (t (f3 (rest l) n))))
+  
+(defunc m3 (l n)
+  :input-contract (and (lonp l)(natp n))
+  :output-contract (natp (m3 l n))
+  (+ (len l) n))
+  
+For the first:
+(lonp l) /\ (natp n) /\ ~((n = 0)/\(endp l)) /\ (n > 0) => (m3 l (n - 1)) = ((len l) + (n -1)) < ((len l) + n) = (m3 l n)
+
+For the second:
+(lonp l) /\ (natp n) /\ ~((n = 0)/\(endp l)) /\ ~(n > 0) => (m3 (rest l) n) = ((len (rest l)) + n) < ((len l) + n) = (m3 l n)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;<FGM::d>;;
@@ -400,7 +417,21 @@ recursive calls to this function actually be? If b is not empty, will it ever
 be empty some time later? For empty lists can I return a number that is guaranteed 
 to be larger than subsequent calls to m-omg?
 ;;<FNT::b>;;
-.................
+
+examples
+--------
+((a 0)(b '())(c 2)) -> (+ 1 (omg 0 '(2) 2)) = (+ 1 (+ 1 (omg 0 '(0) 2))) = (+ 1 (+ 1 0)) = 2
+  3 -> 2 -> 0
+((a 3)(b '())(c 1)) -> (+ 1 (omg 3 '(1) 1)) = (+ 1 (+ 1 (omg 3 '(2) 1))) = (+ 1 (+ 1 (+ 1 (omg 3 '(3) 1)))) = (+ 1 (+ 1 (+ 1 0))) = 3
+  5 -> 2 -> 1 -> 0
+((a 0)(b '(10))(c 5)) -> (+ 1 (omg 0 '(0) 5)) = (+ 1 0)) = 1
+  10 -> 0
+--------
+
+(defunc m-omg (a b c)
+  :input-contract (and (posp a) (lonp b) (posp c))
+  :output-contract (natp (m-omg a b c))
+  (if (endp b) (+ 1 (+ a c)) (abs (- a (first b)))))
 
 
 c) Now prove the function terminates using your measure function.  
@@ -545,8 +576,10 @@ conditions (and you prove it works), please let us know.
         ((> x (len y))       (do-anything x (cons x y)))
         (t                   (do-anything (+ x 1) y))))
 
-..............
-
+(defunc m-do-anything (x y)
+  :input-contract (and (natp x) (lonp y))
+  :output-contract (natp (m-do-anything x y))
+  (abs (- x (len y))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
