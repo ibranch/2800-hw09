@@ -281,7 +281,19 @@ becomes (using in-fix notation):
 (implies (and (listp x) (natp n) (not (endp x)))
          (< (m1 (rest x) n) (m1 x n)))
 
-......................
+(defunc f1 (x n)
+ :input-contract (and (listp x) (natp n))
+ :output-contract (listp (f1 x n))
+ (if (endp x)
+     x
+     (rest x)))
+     
+(defunc m1 (x n)
+ :input-contract (and (listp x) (natp n))
+ :output-contract (natp (m1 x n))
+ (len x))
+ 
+(listp x) /\ (natp n) /\ (not (endp x)) => (m1 (rest x) n) = (len (rest x)) < (len x) = (m1 x n)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -294,7 +306,23 @@ For second recursive call:
 (implies (and (natp n) (integerp i) (not (equal i 0)) (not (< i 0)))
          (< (m2 (+ n 1) (- i 1)) (m2 n i)))
 
-......................        
+(defunc f2 (n i)
+ :input-contract (and (natp n) (integerp i) (not (equal i 0)))
+ :output-contract (natp (f2 n i))
+ (cond ((equal i 0) n) 
+       ((< i 0)     (f2 n (+ 1 i)))
+       (t           (f2 (+ n 1) (- i 1)))))
+     
+(defunc m2 (n i)
+ :ic (and (natp n) (integerp i) (not (equal i 0)))
+ :oc (natp (m2 n i))
+ (abs i))
+ 
+For the first:
+(natp n) /\ (integerp i) /\ (not (equal i 0)) /\ (< i 0) => (m2 n (+ i 1)) = (abs (+ 1 i)) < (abs i) = (m2 n i)
+
+For the second:
+(natp n) /\ (integerp i) /\ (not (equal i 0)) /\ (not (< i 0)) => (m2 (+ n 1) (- i 1)) = (abs (- i 1)) < (abs i) = (m2 n i)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;<FGM::c>;;
