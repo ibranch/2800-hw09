@@ -752,14 +752,48 @@ Where
 
 Use the induction scheme for nind.  What are the proof obligations?
 ;;<II::c.nind>;;
-........................
 
+1. (not (natp p)) => phi_poweven
+2. (and (natp p)(equal p 0)) => phi_poweven
+3. (and (natp p)(not (equal p 0))(phi_poweven|((p (- p 1))))) => phi_poweven
 
 ;;<II::c.proof>;;
 Prove the three conjectures to prove that phi-poweven is a theorem.
 You can use the following theorem without proving it:
 T_esquare: (implies (rationalp r)(>= (* r r) 0))
-...............
 
+1.
+C1. (not (natp p))
+C2. (rationalp x)
+C3. (natp p)
+
+nil {C1,C3,PL}
+nil => x is always true, QED
+
+2.
+C1. (natp p)
+C2. (equal p 0)
+C3. (rationalp x)
+
+(>= (pow x (* p 2)) 0))
+= {C2,arithmetic (p*0 = 0),C1,C3,def. pow, if-ax}
+(>= 1 0)
+= {pl}
+t
+QED
+
+3.
+C1. (natp p)
+C2. (not (equal p 0))
+C3. (rationalp x)
+
+(>= (pow x (* p 2)) 0))
+= {C1,C2,C3,def.pow,if-ax}
+(>= (* x (pow x (- (* p 2) 1))) 0)
+= {C1,C2,C3,def.pow,if-ax,arithmetic}
+(>= (* x (* x (pow x (* (- p 1) 2)))) 0)
+= {C3,arithmetic,T_esquare,pow o.c.}
+t
+QED
 
 |#
